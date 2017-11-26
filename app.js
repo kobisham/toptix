@@ -50,11 +50,19 @@ isc.ListGrid.create({
     },
     selectionChanged: function (record) {
         itemForm.editRecord(record);
-        this.recalculateSummaries();        
-        totalsForm.getItem("totalQty").setValue(this.getGridSummaryData()[0].Qty);
-        totalsForm.getItem("totalAmount").setValue(this.getGridSummaryData()[0].Total);
-        
-        //orderItemsList.setData(record.items);
+
+    },
+    dataChanged: function () {
+        // update totals form
+        var totalQty = 0;
+        var totalAmount = 0;
+        var myArr = itemList.getData().allRows;
+        for (var i=0;i<myArr.length;i++) {
+            totalQty += Number(myArr[i].Qty);
+            totalAmount += Number(myArr[i].Qty * myArr[i].Price);
+        }     
+        totalsForm.getItem("totalQty").setValue(totalQty);
+        totalsForm.getItem("totalAmount").setValue(totalAmount);
     }
    
 });
