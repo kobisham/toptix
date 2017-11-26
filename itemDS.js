@@ -12,16 +12,16 @@ isc.DataSource.create({
             title: "description"
         },
         {
-            name: "Qty",
+            name: "qty",
             title: "Qty"
         },
         {
-            name: "Price",
+            name: "price",
             title: "Price",
             type: "float"
         },
         {
-            name: "Total",
+            name: "total",
             title: "Total",
             type: "float"
         }

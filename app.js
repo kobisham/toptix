@@ -1,17 +1,18 @@
 
+// master label
 isc.Label.create({
     ID: "masterLabel",
     wrap: false,
     contents: "<b>Master</b> *double click to edit row",
     height: 20,
-    autoDraw: true,
-    baseStyle: "exampleSeparator"
+    autoDraw: false
 });
 
+// main item grid
 isc.ListGrid.create({
     ID: "itemList",
+    autoDraw: false,
     top: 30,
-    width: 550,
     height: 200,
     alternateRecordStyles: true,
     dataSource: itemDS,
@@ -67,22 +68,25 @@ isc.ListGrid.create({
    
 });
 
-
+// add new record button
 isc.IButton.create({
+    ID: "addNewRecord",
+    autoDraw: false,
     top: 240,
     title: "Add New",
     click: "itemList.startEditingNew()"
 });
 
+// item details label
 isc.Label.create({
     ID: "itemDetailLabel",
-    top: 280,
     wrap: false,
     contents: "<b>Item Details</b>",
     height: 20,
-    autoDraw: true
+    autoDraw: false
 });
 
+// item details form
 isc.DynamicForm.create({
     ID: "itemForm",
     dataSource: itemDS,
@@ -100,6 +104,7 @@ isc.DynamicForm.create({
     ]
 });
 
+// grid totals label
 isc.Label.create({
     ID: "itemTotalsLabel",
     wrap: false,
@@ -108,9 +113,11 @@ isc.Label.create({
     autoDraw: false
 });
 
+// grid totals form
 isc.DynamicForm.create({
     ID: "totalsForm",
     autoDraw: false,
+    width: "100%",
     fields: [{
             name: "totalQty",
             title: "Total Qty",
@@ -125,12 +132,18 @@ isc.DynamicForm.create({
     ]
 });
 
+// main layout
 isc.VLayout.create({
-    top: 300,
-    width: 500,
+    top: 20,
+    width: "90%",
     autoDraw: true,
-    membersMargin: 0,
+    membersMargin: 10,
+    left: 10,
     members: [
+        masterLabel,
+        itemList,
+        addNewRecord,
+        itemDetailLabel,
         itemForm,
         isc.IButton.create({
             title: "Save",
@@ -138,12 +151,9 @@ isc.VLayout.create({
             click: function () {
                 isc.RPCManager.startQueue();
                 
-                //itemForm.setValue("items", orderItemsList.data);
                 itemForm.saveData();
-                
+    
                 isc.RPCManager.sendQueue(function () {
-                    //itemForm.clearValues();
-                    //itemList.deselectAllRecords();
                     isc.say('Data saved');
                    
                 });
