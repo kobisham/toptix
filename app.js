@@ -1,53 +1,8 @@
-var mySampleData = [{
-        itemName: "Item 1",
-        description: "Item 1 description",
-        Qty: 2,
-        Price: 22.5
-    },
-    {
-        itemName: "Item 2",
-        description: "Item 2 description",
-        Qty: 4,
-        Price: 3
-    }
-];
-
-isc.DataSource.create({
-    ID: "itemDS",
-    fields: [
-        
-        {
-            name: "itemName",
-            title: "item Name",
-            primaryKey:true
-        },
-        {
-            name: "description",
-            title: "description"
-        },
-        {
-            name: "Qty",
-            title: "Qty"
-        },
-        {
-            name: "Price",
-            title: "Price",
-            type: "float"
-        },
-        {
-            name: "Total",
-            title: "Total",
-            type: "float"
-        }
-    ],
-    clientOnly: true,
-    testData: mySampleData
-})
-
 
 isc.Label.create({
+    ID: "masterLabel",
     wrap: false,
-    contents: "<b>Master</b>",
+    contents: "<b>Master</b> *double click to edit row",
     height: 20,
     autoDraw: true,
     baseStyle: "exampleSeparator"
@@ -61,13 +16,17 @@ isc.ListGrid.create({
     alternateRecordStyles: true,
     dataSource: itemDS,
     autoFetchData: true,
+    canEdit: true,
+    canRemoveRecords: true,
+    editEvent: "doubleClick",
+    saveLocally: true,
 
     // fields to display
     fields: [{
             name: "itemName"
         },
         {
-            name: "Qty"
+            name: "Qty", summaryFunction:"sum"
         },
         {
             name: "Price"
@@ -75,11 +34,14 @@ isc.ListGrid.create({
         {
             name: "Total",
             canEdit: false,
+            //type:"summary", 
+            summaryFunction:"sum",
             formatCellValue: function (value, record) {
                 return record.Qty * record.Price;
             }
         }
     ],
+    // functions
     editorExit: function (event, record, newValue, rowNum, colNum) {
         var fieldName = this.getFieldName(colNum);
         if (fieldName == 'Qty' || fieldName == 'Price') {
@@ -88,12 +50,13 @@ isc.ListGrid.create({
     },
     selectionChanged: function (record) {
         itemForm.editRecord(record);
+        this.recalculateSummaries();        
+        totalsForm.getItem("totalQty").setValue(this.getGridSummaryData()[0].Qty);
+        totalsForm.getItem("totalAmount").setValue(this.getGridSummaryData()[0].Total);
+        
         //orderItemsList.setData(record.items);
-    },
-    canEdit: true,
-    canRemoveRecords: true,
-    editEvent: "click",
-    saveLocally: true
+    }
+   
 });
 
 
@@ -104,7 +67,7 @@ isc.IButton.create({
 });
 
 isc.Label.create({
-    id: "itemDetailLabel",
+    ID: "itemDetailLabel",
     top: 280,
     wrap: false,
     contents: "<b>Item Details</b>",
@@ -130,7 +93,31 @@ isc.DynamicForm.create({
     ]
 });
 
+isc.Label.create({
+    ID: "itemTotalsLabel",
+    wrap: false,
+    contents: "<b>Totals</b>",
+    height: 20,
+    autoDraw: false,
+    baseStyle: "exampleSeparator"
+});
 
+isc.DynamicForm.create({
+    ID: "totalsForm",
+    autoDraw: false,
+    fields: [{
+            name: "totalQty",
+            title: "Total Qty",
+            canEdit:false
+        },
+        {
+            name: "totalAmount",
+            title: "Total Amount",
+            canEdit:false
+        },
+
+    ]
+});
 
 isc.VLayout.create({
     top: 300,
@@ -155,7 +142,9 @@ isc.VLayout.create({
                    
                 });
             }
-        })
+        }),
+        itemTotalsLabel,
+        totalsForm
 
     ],
 
