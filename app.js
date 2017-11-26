@@ -26,26 +26,26 @@ isc.ListGrid.create({
             name: "itemName"
         },
         {
-            name: "Qty", summaryFunction:"sum"
+            name: "qty", summaryFunction:"sum"
         },
         {
-            name: "Price"
+            name: "price"
         },
         {
-            name: "Total",
+            name: "total",
             canEdit: false,
             //type:"summary", 
             summaryFunction:"sum",
             formatCellValue: function (value, record) {
-                return record.Qty * record.Price;
+                return record.qty * record.price;
             }
         }
     ],
     // functions
     editorExit: function (event, record, newValue, rowNum, colNum) {
         var fieldName = this.getFieldName(colNum);
-        if (fieldName == 'Qty' || fieldName == 'Price') {
-            this.refreshCell(rowNum, this.getFieldNum('Total'), false, true);
+        if (fieldName == 'qty' || fieldName == 'price') {
+            this.refreshCell(rowNum, this.getFieldNum('total'), false, true);
         }
     },
     selectionChanged: function (record) {
@@ -58,8 +58,8 @@ isc.ListGrid.create({
         var totalAmount = 0;
         var myArr = itemList.getData().allRows;
         for (var i=0;i<myArr.length;i++) {
-            totalQty += Number(myArr[i].Qty);
-            totalAmount += Number(myArr[i].Qty * myArr[i].Price);
+            totalQty += Number(myArr[i].qty);
+            totalAmount += Number(myArr[i].qty * myArr[i].price);
         }     
         totalsForm.getItem("totalQty").setValue(totalQty);
         totalsForm.getItem("totalAmount").setValue(totalAmount);
@@ -80,8 +80,7 @@ isc.Label.create({
     wrap: false,
     contents: "<b>Item Details</b>",
     height: 20,
-    autoDraw: true,
-    baseStyle: "exampleSeparator"
+    autoDraw: true
 });
 
 isc.DynamicForm.create({
@@ -106,8 +105,7 @@ isc.Label.create({
     wrap: false,
     contents: "<b>Totals</b>",
     height: 20,
-    autoDraw: false,
-    baseStyle: "exampleSeparator"
+    autoDraw: false
 });
 
 isc.DynamicForm.create({
@@ -145,7 +143,7 @@ isc.VLayout.create({
                 
                 isc.RPCManager.sendQueue(function () {
                     //itemForm.clearValues();
-                    itemList.deselectAllRecords();
+                    //itemList.deselectAllRecords();
                     isc.say('Data saved');
                    
                 });
